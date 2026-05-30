@@ -33,10 +33,9 @@
 
 ## agent-context/tasks/
 
-- `refresh-map.task.md`: Re-derive map/ files when the repo structure changes.
-- `cross-studio-report.task.md`: Execute a full cross-studio status/activity/blockers report.
+- `refresh-map.task.md`: Re-derive map/ files when the repo structure changes; bulk registry refresh.
+- `cross-studio-report.task.md`: Execute a full cross-studio status/activity/blockers report to Vault.
 - `onboard-studio.task.md`: Orchestrate the full studio onboarding flow (integrate-ales + connect-studio).
-- `refresh-map.task.md`: Refresh Hub map files when structure changes.
 - `validate-hub-contract.task.md`: Run all four contract validation scenarios and produce evidence.
 
 ## agent-context/templates/
