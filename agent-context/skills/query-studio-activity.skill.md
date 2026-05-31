@@ -22,6 +22,13 @@ Read each registered studio's `current_work` and `recent_activity` sources via i
 
 ## Steps
 
+### Step 0 — Verify alias resolution
+After loading `vault.md`, confirm `{hub_data}` and `{hub_registry}` resolve to reachable paths.
+If either alias is unresolvable:
+- Set `response_status: error`; emit envelope with `error.code: ALIAS_UNRESOLVED`.
+- `error.message`: `"Reload agent-context/intent/dependencies/vault.md, confirm alias mapping, and rerun query."`
+- Halt — do not proceed to per-studio reads.
+
 ### Step 1 — Resolve studio list
 Same as `query-studio-status`: use requested studio or all registered studios.
 
@@ -87,6 +94,7 @@ Write updated studio entries to `{hub_data}/studio-registry.md`.
 - Respect `bounds.max_files_per_query` and `max_depth` strictly.
 
 ## Verification
+- If `{hub_data}` or `{hub_registry}` alias is unresolvable, `response_status: error` and `error.code: ALIAS_UNRESOLVED` are emitted and execution halts before the per-studio loop.
 - Envelope contains all required keys.
 - `current_work` and `recent_activity` are lists (may be empty, not null).
 - Narrative sections appear in required order.

@@ -23,8 +23,15 @@ Read each registered studio's plugin manifest, fetch its declared status source,
 
 ## Steps
 
+### Step 0 — Verify alias resolution
+After loading `vault.md`, confirm `{hub_data}` and `{hub_registry}` resolve to reachable paths.
+If either alias is unresolvable:
+- Set `response_status: error`; emit envelope with `error.code: ALIAS_UNRESOLVED`.
+- `error.message`: `"Reload agent-context/intent/dependencies/vault.md, confirm alias mapping, and rerun query."`
+- Halt — do not proceed to per-studio reads.
+
 ### Step 1 — Resolve studio list
-If a specific studio was requested, use only that studio. Otherwise use all registered studios from `{hub_data}/studio-registry.md`. If the registry file is missing, treat all known studios as candidates (AnimationStudio, ResearchStudio, Vault) and emit `REGISTRY_STALE`.
+If a specific studio was requested, use only that studio. Otherwise use all registered studios from `{hub_data}/studio-registry.md`. If the registry file is missing or unreadable, emit `REGISTRY_STALE` and set `response_status: error` — do not enumerate or guess studio names.
 
 ### Step 2 — For each studio
 1. Locate `<studio-repo>/agent-context/plugins/hub/manifest.md`.
@@ -102,6 +109,7 @@ Write updated studio entries to `{hub_data}/studio-registry.md`.
 - All `{hub_*}` output paths must be resolved via vault.md aliases.
 
 ## Verification
+- If `{hub_data}` or `{hub_registry}` alias is unresolvable, `response_status: error` and `error.code: ALIAS_UNRESOLVED` are emitted and execution halts before the per-studio loop.
 - Envelope contains all required keys.
 - `response_status` is one of the four valid values.
 - Each studio entry has `confidence` and `last_refresh_timestamp`.

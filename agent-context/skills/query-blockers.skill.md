@@ -22,6 +22,13 @@ Read each registered studio's `blockers` source via its plugin manifest, aggrega
 
 ## Steps
 
+### Step 0 — Verify alias resolution
+After loading `vault.md`, confirm `{hub_data}` and `{hub_registry}` resolve to reachable paths.
+If either alias is unresolvable:
+- Set `response_status: error`; emit envelope with `error.code: ALIAS_UNRESOLVED`.
+- `error.message`: `"Reload agent-context/intent/dependencies/vault.md, confirm alias mapping, and rerun query."`
+- Halt — do not proceed to per-studio reads.
+
 ### Step 1 — Resolve studio list
 Use requested studio or all registered studios.
 
@@ -91,6 +98,7 @@ Write updated studio entries to `{hub_data}/studio-registry.md`.
 - Redact any sensitive tokens or credentials found in blocker descriptions.
 
 ## Verification
+- If `{hub_data}` or `{hub_registry}` alias is unresolvable, `response_status: error` and `error.code: ALIAS_UNRESOLVED` are emitted and execution halts before the per-studio loop.
 - `blockers` list populated per studio where source was readable.
 - Priority Blockers section sorted by impact level.
 - Error classes and remediation hints present for each failing studio.
