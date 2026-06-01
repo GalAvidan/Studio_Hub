@@ -4,7 +4,7 @@
 
 - Files: `kebab-case` for all task, skill, and template files. Suffix: `.task.md`, `.skill.md`, `.template.md`.
 - Folders: `kebab-case`. No uppercase. No spaces.
-- Branches: `hub/<topic>` for Hub data work in Vault; `galAvidan/ImplementHub` for framework changes in this repo.
+- Branches: `hub/<topic>` for Hub data work in Vault; `feat/<topic>` or `fix/<topic>` for framework changes in this repo.
 - Commits: `<type>(scope): description` — e.g. `feat(skills): add query-studio-status`, `fix(tasks): correct vault alias in refresh-map`.
   - Types: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`.
 - Studio IDs: `kebab-case` (e.g. `animation-studio`, `research-studio`, `vault`).

@@ -52,6 +52,4 @@ Orchestrate the full studio onboarding flow: ensure ALES is complete on the stud
 - `vault.md` aliases cannot be resolved — stop, report `ALIAS_UNRESOLVED`.
 
 ## Rollout Order
-1. ResearchStudio (mandatory canary).
-2. AnimationStudio (after canary pass).
-3. Vault (after AnimationStudio pass).
+The active rollout sequence is recorded in `Vault/Studio_Hub/`. Consult that file before onboarding any new studio.

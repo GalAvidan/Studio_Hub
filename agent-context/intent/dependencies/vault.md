@@ -29,4 +29,4 @@ studioName: Studio_Hub
 ## Branch Convention
 
 - Use `hub/<topic>` for Hub data work in Vault.
-- Use `galAvidan/ImplementHub` for Hub framework/logic changes in Studio_Hub repo.
+- Use `feat/<topic>` or `fix/<topic>` for Hub framework/logic changes in Studio_Hub repo.
