@@ -2,9 +2,9 @@
 
 ## Root
 
-- `README.md`: Human-readable introduction to Studio Hub.
-- `AGENTS.md`: Agent entry point — load order and operating rules for agents working in this repo.
-- `CONTEXT.md`: Current operational context snapshot for agents and humans.
+- `readme.md`: Human-readable introduction to Studio Hub.
+- `agents.md`: Agent entry point — load order and operating rules for agents working in this repo.
+- `context.md`: Current operational context snapshot for agents and humans.
 - `agent-context/`: Full ALES agent-context layer (intent, map, skills, tasks, templates).
 
 ## agent-context/intent/
