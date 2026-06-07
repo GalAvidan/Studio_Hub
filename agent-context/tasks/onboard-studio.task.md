@@ -13,6 +13,10 @@ Orchestrate the full studio onboarding flow: ensure ALES is complete on the stud
 4. `agent-context/skills/connect-studio.skill.md`
 5. `agent-context/map/workflow.md`
 
+> **Governance:** All studios onboarded via this task must satisfy the creation gate in
+> [ADR-G01](ALES/Docs/decisions/ADR-G01-governance.md) — purpose ADR, anti-goals, manifest,
+> and a passing `validate-hub-contract` run. No placeholder studios.
+
 ## Steps
 
 1. **Pre-check**: Confirm `validate-hub-contract.task.md` has been run recently (< 7 days). If not, run it first. Hub contract must pass before onboarding any studio.

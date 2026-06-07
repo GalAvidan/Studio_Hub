@@ -4,7 +4,7 @@ Content store for Studio Hub cross-studio data, registry, and generated reports.
 
 ## Paths
 
-vaultRoot: c:\Git\Vault
+vaultRoot: Vault
 studioName: Studio_Hub
 
 {knowledge}: {vaultRoot}\{studioName}\knowledge

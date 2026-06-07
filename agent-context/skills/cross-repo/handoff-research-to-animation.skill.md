@@ -3,6 +3,7 @@ skill: handoff-research-to-animation
 version: 1
 studio: Studio_Hub
 scope: cross-repo
+canonical: true
 initiative: campaign-infra-v1
 updated: 2026-06-01
 ---
