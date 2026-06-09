@@ -12,12 +12,21 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$root        = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent  # C:\Git
+$root        = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Split-Path -Parent  # C:\Git
+$studiosDir  = Join-Path $root 'Studios'
+$vaultDir    = Join-Path $root 'Vault'
 $studios     = @('AnimationStudio','ResearchStudio','Vault','Studio_Hub')
 $manifestRel = 'agent-context/plugins/hub/manifest.md'
 $errors      = [System.Collections.Generic.List[string]]::new()
 $warnings    = [System.Collections.Generic.List[string]]::new()
 $infos       = [System.Collections.Generic.List[string]]::new()
+
+function Resolve-WorkspaceEntryPath([string]$name) {
+    if ($name -eq 'Vault') {
+        return $vaultDir
+    }
+    return Join-Path $studiosDir $name
+}
 
 Write-Host "`n=== Hub Contract — Full Check ===" -ForegroundColor Cyan
 
@@ -30,7 +39,8 @@ if ($LASTEXITCODE -ne 0) {
 
 # ── BLOCK: every manifest source_path resolves ───────────────────────────────
 foreach ($studio in $studios) {
-    $manifestPath = Join-Path $root $studio $manifestRel
+    $basePath = Resolve-WorkspaceEntryPath $studio
+    $manifestPath = Join-Path $basePath $manifestRel
     if (-not (Test-Path $manifestPath)) { continue }
 
     $content = Get-Content $manifestPath -Raw
@@ -47,7 +57,7 @@ foreach ($studio in $studios) {
 
 # ── BLOCK: discovery-index drift ─────────────────────────────────────────────
 $indexScript    = Join-Path $PSScriptRoot 'generate-index.ps1'
-$committedIndex = Join-Path $root 'Vault' 'Studio_Hub' 'discovery-index.md'
+$committedIndex = Join-Path $vaultDir 'studios' 'Studio_Hub' 'discovery-index.md'
 
 if ((Test-Path $indexScript) -and (Test-Path $committedIndex)) {
     $tempIndex = Join-Path ([System.IO.Path]::GetTempPath()) 'discovery-index-check.md'
@@ -55,7 +65,7 @@ if ((Test-Path $indexScript) -and (Test-Path $committedIndex)) {
     $committedHash = (Get-FileHash $committedIndex -Algorithm SHA256).Hash
     $freshHash     = (Get-FileHash $tempIndex     -Algorithm SHA256).Hash
     if ($committedHash -ne $freshHash) {
-        $errors.Add("INDEX_DRIFT: Vault/Studio_Hub/discovery-index.md is out of date. Run 'pwsh Studio_Hub/scripts/generate-index.ps1' and commit.")
+        $errors.Add("INDEX_DRIFT: Vault/studios/Studio_Hub/discovery-index.md is out of date. Run 'pwsh Studio_Hub/scripts/generate-index.ps1' and commit.")
     }
     Remove-Item $tempIndex -ErrorAction SilentlyContinue
 } elseif (-not (Test-Path $indexScript)) {
@@ -65,7 +75,7 @@ if ((Test-Path $indexScript) -and (Test-Path $committedIndex)) {
 }
 
 # ── WARN: binary files staged without LFS pointer ────────────────────────────
-$vaultPath = Join-Path $root 'Vault'
+$vaultPath = $vaultDir
 if (Test-Path (Join-Path $vaultPath '.git')) {
     $stagedBinaries = git -C $vaultPath diff --cached --name-only 2>$null |
         Where-Object { $_ -match '\.(mp4|webm|wav|mp3|aif|pdf|png|jpg|jpeg|gif)$' }
@@ -80,8 +90,9 @@ if (Test-Path (Join-Path $vaultPath '.git')) {
 # ── INFO: casing nits ─────────────────────────────────────────────────────────
 $casingNits = @('bot.md','context.md','readme.md')
 foreach ($studio in $studios) {
+    $basePath = Resolve-WorkspaceEntryPath $studio
     foreach ($nit in $casingNits) {
-        $nitPath = Join-Path $root $studio $nit
+        $nitPath = Join-Path $basePath $nit
         if (Test-Path $nitPath) {
             $infos.Add("CASING_NIT: $studio/$nit — consider uppercase (BOT.md / CONTEXT.md / README.md)")
         }
@@ -108,3 +119,4 @@ if ($errors.Count -gt 0) {
 
 Write-Host "`nFull check PASSED" -ForegroundColor Green
 exit 0
+

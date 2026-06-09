@@ -16,7 +16,7 @@ Agent-Layer Execution Specification — the structured knowledge contract that g
 Hub reads studio data on demand (pull), rather than receiving pushed updates. Each query triggers a fresh read of declared sources.
 
 ## Vault
-The shared content store at `C:/Git/Vault`. Hub runtime data (registry, reports, snapshots) lives under `Vault/Studio_Hub/knowledge/hub/`.
+The shared content store at `C:/Git/Vault`. Hub runtime data (registry, reports, snapshots) lives under `Vault/studios/Studio_Hub/knowledge/hub/`.
 
 ## Registry
 The per-studio record files in `{hub_registry}/<studio>.md` and the aggregate map at `{hub_data}/studio-registry.md`. Contains last-seen status, confidence, and freshness timestamps for each registered studio.
@@ -38,3 +38,4 @@ A formal checkpoint (A, B, C, etc.) where sign-off must be recorded in `{hub_rep
 
 ## REGISTRY_STALE
 Error class emitted when `query_timestamp - last_refresh_timestamp > 168h` (7 days) or when `last_refresh_timestamp` is missing. Forces confidence to `low`.
+

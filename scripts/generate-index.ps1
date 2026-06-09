@@ -2,7 +2,7 @@
 <#
 .SYNOPSIS
   Generate the cross-repo workspace discovery index.
-  Writes to Vault/Studio_Hub/discovery-index.md (or -OutputPath if specified).
+  Writes to Vault/studios/Studio_Hub/discovery-index.md (or -OutputPath if specified).
 
 .USAGE
   pwsh Studio_Hub/scripts/generate-index.ps1
@@ -10,7 +10,7 @@
   pwsh Studio_Hub/scripts/generate-index.ps1 -Quiet          # suppress progress output
 
 .OUTPUT
-  Vault/Studio_Hub/discovery-index.md
+  Vault/studios/Studio_Hub/discovery-index.md
 #>
 
 param(
@@ -21,10 +21,19 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$root = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent  # C:\Git
+$root       = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Split-Path -Parent  # C:\Git
+$studiosDir = Join-Path $root 'Studios'
+$vaultDir   = Join-Path $root 'Vault'
+
+function Resolve-WorkspaceEntryPath([string]$name) {
+    if ($name -eq 'Vault') {
+        return $vaultDir
+    }
+    return Join-Path $studiosDir $name
+}
 
 if (-not $OutputPath) {
-    $OutputPath = Join-Path $root 'Vault' 'Studio_Hub' 'discovery-index.md'
+    $OutputPath = Join-Path $root 'Vault' 'studios' 'Studio_Hub' 'discovery-index.md'
 }
 
 function Log([string]$msg) { if (-not $Quiet) { Write-Host $msg } }
@@ -47,11 +56,12 @@ $lines.Add("|----|------|-------|--------|")
 $studios     = @('AnimationStudio','ResearchStudio','Studio_Hub','Vault')
 $manifestRel = 'agent-context/plugins/hub/manifest.md'
 foreach ($s in $studios) {
-    $agentsPath = Join-Path $root $s 'AGENTS.md'
+    $workspacePath = Resolve-WorkspaceEntryPath $s
+    $agentsPath = Join-Path $workspacePath 'AGENTS.md'
     $status     = if (Test-Path $agentsPath) { 'Active' } else { 'Entry missing' }
-    $entryRel   = "$s/AGENTS.md"
+    $entryRel   = if ($s -eq 'Vault') { 'Vault/AGENTS.md' } else { "Studios/$s/AGENTS.md" }
     # Read studio_id from manifest if available, else derive from folder name
-    $manifestPath = Join-Path $root $s $manifestRel
+    $manifestPath = Join-Path $workspacePath $manifestRel
     $id = $s.ToLower() -replace '_','-'
     if (Test-Path $manifestPath) {
         $mContent = Get-Content $manifestPath -Raw
@@ -69,7 +79,8 @@ $lines.Add("| Studio | Category | Skill | Path |")
 $lines.Add("|--------|----------|-------|------|")
 
 foreach ($s in $studios) {
-    $skillsRoot = Join-Path $root $s 'agent-context' 'skills'
+    $workspacePath = Resolve-WorkspaceEntryPath $s
+    $skillsRoot = Join-Path $workspacePath 'agent-context' 'skills'
     if (-not (Test-Path $skillsRoot)) { continue }
     Get-ChildItem -Path $skillsRoot -Recurse -Filter '*.skill.md' | Sort-Object FullName | ForEach-Object {
         $relPath  = $_.FullName.Substring($root.Length + 1).Replace('\','/')
@@ -89,7 +100,8 @@ $lines.Add("| Studio | Task | Path |")
 $lines.Add("|--------|------|------|")
 
 foreach ($s in $studios) {
-    $tasksRoot = Join-Path $root $s 'agent-context' 'tasks'
+    $workspacePath = Resolve-WorkspaceEntryPath $s
+    $tasksRoot = Join-Path $workspacePath 'agent-context' 'tasks'
     if (-not (Test-Path $tasksRoot)) { continue }
     Get-ChildItem -Path $tasksRoot -Filter '*.task.md' | Sort-Object Name | ForEach-Object {
         $relPath  = $_.FullName.Substring($root.Length + 1).Replace('\','/')
@@ -106,7 +118,7 @@ $lines.Add("")
 $lines.Add("| ID | Title | Status | Path |")
 $lines.Add("|----|-------|--------|------|")
 
-$mapPath = Join-Path $root 'Vault' 'ResearchStudio' 'projects' 'map.md'
+$mapPath = Join-Path $vaultDir 'studios' 'ResearchStudio' 'projects' 'map.md'
 if (Test-Path $mapPath) {
     $mapContent = Get-Content $mapPath
     foreach ($line in $mapContent) {
@@ -116,7 +128,7 @@ if (Test-Path $mapPath) {
             $folder = $Matches[2].Trim()
             $title  = $Matches[3].Trim()
             $status = $Matches[4].Trim()
-            $path   = "Vault/ResearchStudio/projects/$folder"
+            $path   = "Vault/studios/ResearchStudio/projects/$folder"
             $lines.Add("| $id | $title | $status | $path |")
         }
     }
@@ -155,3 +167,4 @@ if (-not (Test-Path $outputDir)) {
 $lines | Set-Content -Path $OutputPath -Encoding UTF8
 Log "Written: $OutputPath"
 Log ""
+
