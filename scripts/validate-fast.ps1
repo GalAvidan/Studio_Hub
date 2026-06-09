@@ -12,17 +12,27 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$root        = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent  # C:\Git
+$root        = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Split-Path -Parent  # C:\Git
+$studiosDir  = Join-Path $root 'Studios'
+$vaultDir    = Join-Path $root 'Vault'
 $studios     = @('AnimationStudio','ResearchStudio','Vault','Studio_Hub')
 $manifestRel = 'agent-context/plugins/hub/manifest.md'
 $errors      = [System.Collections.Generic.List[string]]::new()
 $warnings    = [System.Collections.Generic.List[string]]::new()
 
+function Resolve-WorkspaceEntryPath([string]$name) {
+    if ($name -eq 'Vault') {
+        return $vaultDir
+    }
+    return Join-Path $studiosDir $name
+}
+
 Write-Host "`n=== Hub Contract — Fast Check ===" -ForegroundColor Cyan
 
 # ── BLOCK: manifest presence ──────────────────────────────────────────────────
 foreach ($studio in $studios) {
-    $path = Join-Path $root $studio $manifestRel
+    $basePath = Resolve-WorkspaceEntryPath $studio
+    $path = Join-Path $basePath $manifestRel
     if (-not (Test-Path $path)) {
         $errors.Add("MANIFEST_MISSING: $studio/$manifestRel not found")
     }
@@ -30,7 +40,8 @@ foreach ($studio in $studios) {
 
 # ── BLOCK: no absolute paths in any manifest ─────────────────────────────────
 foreach ($studio in $studios) {
-    $path = Join-Path $root $studio $manifestRel
+    $basePath = Resolve-WorkspaceEntryPath $studio
+    $path = Join-Path $basePath $manifestRel
     if (-not (Test-Path $path)) { continue }
     $content = Get-Content $path -Raw
     if ($content -match '[A-Za-z]:\\') {
@@ -43,7 +54,8 @@ foreach ($studio in $studios) {
 
 # ── BLOCK: AGENTS.md exists (uppercase) for all four studios ─────────────────
 foreach ($studio in $studios) {
-    $agentsPath = Join-Path $root $studio 'AGENTS.md'
+    $basePath = Resolve-WorkspaceEntryPath $studio
+    $agentsPath = Join-Path $basePath 'AGENTS.md'
     # Vault stores AGENTS.md at repo root (C:\Git\Vault\AGENTS.md)
     if (-not (Test-Path $agentsPath)) {
         $errors.Add("AGENTS_MISSING: $studio/AGENTS.md not found")

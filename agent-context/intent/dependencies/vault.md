@@ -7,7 +7,7 @@ Content store for Studio Hub cross-studio data, registry, and generated reports.
 vaultRoot: Vault
 studioName: Studio_Hub
 
-{knowledge}: {vaultRoot}\{studioName}\knowledge
+{knowledge}: {vaultRoot}\studios\{studioName}\knowledge
 {hub_data}: {knowledge}\hub
 {hub_registry}: {hub_data}\registry
 {hub_reports}: {hub_data}\reports

@@ -19,7 +19,7 @@ Before any Hub work, load these files in order:
 - **Never hard-code per-studio logic.** All studio-specific knowledge must come from `agent-context/plugins/hub/manifest.md` in the studio's own repo.
 - **Deterministic errors.** When a studio manifest is missing, invalid, or a source is unreadable, emit the exact error class (`MANIFEST_MISSING`, `MANIFEST_INVALID`, `SOURCE_UNREADABLE`, etc.) with a remediation hint — do not guess at studio state.
 - **Partial failures are allowed.** A single studio failure must not abort the full query. Aggregate what is available and surface errors per studio.
-- **Canary first.** Designate a canary studio before each onboarding batch. Validate canary results before rolling out to any additional studio. The current canary assignment is recorded in `Vault/Studio_Hub/`.
+- **Canary first.** Designate a canary studio before each onboarding batch. Validate canary results before rolling out to any additional studio. The current canary assignment is recorded in `Vault/studios/Studio_Hub/`.
 
 ## Query Skills
 
@@ -41,3 +41,4 @@ Before any Hub work, load these files in order:
 - Reports and evidence: `{hub_reports}/`
 - Snapshots: `{hub_snapshots}/`
 - Aggregate map: `{hub_data}/studio-registry.md`
+
