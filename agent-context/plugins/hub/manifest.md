@@ -27,6 +27,13 @@ bounds:
   max_lines_per_file: 100
   max_depth: 1
 
+token_budget:
+  context_profile: query
+  startup_files_minimal: 2
+  startup_files_query: 4
+  escalation_trigger: "gap confirmed after minimal load"
+  max_output_tokens: 1500
+
 security:
   allow_paths:
     - Studios/Studio_Hub/README.md
