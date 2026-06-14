@@ -4,13 +4,17 @@ Studio Hub is the central coordination layer for the studio ecosystem. It answer
 
 ## First Read
 
-Before any Hub work, load these files in order:
+**Start with the minimal context profile** — see `agent-context/intent/context-profiles.md`.
+Use `agent-context/map/load-order.md` for the exact file sequence for your workflow.
+
+Default load order:
 
 1. `agent-context/intent/dependencies/vault.md` — alias contract for all Hub data paths
 2. `agent-context/intent/dependencies/_index.md` — dependency index
 3. `agent-context/intent/overview.md` — purpose, principles, and agent behavior
-4. `agent-context/map/workflow.md` — routing and load-order rules
-5. The specific skill or task file matching the user's request
+4. `agent-context/intent/anti-goals-brief.md` — 5-bullet refusal summary
+5. `agent-context/map/workflow.md` — routing (load when query type is known)
+6. The specific skill (use `agent-context/map/skills-index.md`) or task (use `agent-context/map/tasks-index.md`) matching the user's request
 
 ## Operating Rules
 
